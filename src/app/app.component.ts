@@ -1,53 +1,84 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {FormBuilder, FormGroup, FormControl} from '@angular/forms';
+import {FormBuilder, Validators} from '@angular/forms';
 import {getClient} from "@tauri-apps/api/http";
-import {interval, Subscription} from "rxjs";
+import {interval, Observable, Subscription, map, startWith} from "rxjs";
+import CountiesJSON from 'src/assets/json/counties.json'
+
+interface TimeInterval {
+  value: string
+  viewValue: string
+}
+
+interface County {
+  id: number
+  name: string
+}
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
-export class AppComponent implements OnDestroy{
-  range = this.formBuilder.group({
-    dateFrom: [''],
-    dateTo: ['']
+export class AppComponent implements OnInit, OnDestroy{
+  formGroup = this.formBuilder.group({
+    county: ['', [Validators.required]],
+    timeInterval: ['30'],
+    dateFrom: ['', [Validators.required]],
+    dateTo: ['', Validators.required]
   });
   title = 'notify-me-passport-ro';
-  //TODO The id for Dolj is hardcoded for now
-  cityID = 67
+
   subscription?: Subscription
 
   minDate: Date
+
+  allowedTimeIntervals: TimeInterval[] = [
+    {value: '5',  viewValue: '5' },
+    {value: '10', viewValue: '10'},
+    {value: '15', viewValue: '15'},
+    {value: '20', viewValue: '20'},
+    {value: '30', viewValue: '30'},
+    {value: '60', viewValue: '60'}
+  ]
+  counties: County[] = JSON.parse(JSON.stringify(CountiesJSON))
+  filteredOptions?: Observable<County[]>;
 
   constructor(private formBuilder: FormBuilder) {
     this.minDate = new Date()
   }
 
+  ngOnInit() {
+    this.filteredOptions = this.formGroup.get('county')!.valueChanges.pipe(
+      startWith(''),
+      map(value => this._filter(value))
+    )
+  }
+  ngOnDestroy(): void {
+    this.subscription && this.subscription.unsubscribe()
+  }
+
+  private _filter(value: string): County[] {
+    const filterValue = value.toLowerCase();
+
+    return this.counties.filter(option => option.name.toLowerCase().includes(filterValue));
+  }
+
   async checkAvailability(): Promise<void> {
-    // console.log(typeof this.range.get('dateFrom')?.value)
-    // console.log(this.range.get('dateTo')?.value)
-    // One of the dates was not yet set
-    if (this.range.get('dateFrom')?.value == '' || this.range.get('dateTo')?.value == '') {
-      console.dir('No date selected!')
-      return
-    }
-    const dateFrom = Date.parse(this.range.get('dateFrom')?.value)
-    const dateTo   = Date.parse(this.range.get('dateTo')?.value)
+    const dateFrom = Date.parse(this.formGroup.get('dateFrom')?.value)
+    const dateTo   = Date.parse(this.formGroup.get('dateTo')?.value)
 
-
-    // No city was set through the GUI
-    if (this.cityID == -1) {
-      return
-    }
+    const county: string   = this.formGroup.get('county')!.value
+    const countyID = this.counties.find(el => el.name == county)!.id
 
     const client = await getClient().catch(error => {
       console.error(error)
       throw error
     })
+    let found = false;
 
-    client.get(`https://www.epasapoarte.ro/api/gaps/${this.cityID}`).then(response => {
+    client.get(`https://www.epasapoarte.ro/api/gaps/${countyID}`).then(response => {
       const data = response.data as any[]
+      // TODO Maybe check the order of the months?
       data.map(month => {
         for (let day of month) {
           for (let timeslot of day) {
@@ -56,32 +87,38 @@ export class AppComponent implements OnDestroy{
             // There is a slot in one of the days we have selected
             if (dateFrom <= parsedDate && parsedDate <= dateTo) {
               this.sendNotification(new Date(Date.parse(timeslot.startTime)))
+              found = true
               return
             }
 
           }
         }
       })
+      if (!found) {
+        const timeInterval = this.formGroup.get('timeInterval')?.value
+        new Notification('Nu am gasit nicio rezervare 😞',
+          {body: `Voi incerca din nou in: ${timeInterval} ${timeInterval < 20 ? 'minute' : 'de minute'}`})
+      }
 
     })
 
-    // const client = new Client(1)
-    // client.get(`https://www.epasapoarte.ro/api/gaps/${cityID}`).then(response => {
-    //   console.dir(response.data)
-    // })
   }
 
-  sendNotification(startTime: Date) {
-    new Notification(`Am gasit o posibila rezervare: ${startTime.toLocaleString('ro-RO', {dateStyle: 'full', timeStyle: 'short'})}`, {body: 'Du-te pe https://www.epasapoarte.ro/ sa rezervi!'})
+  sendNotification(startTime: Date): void {
+    const localizedString = startTime.toLocaleString('ro-RO', {dateStyle: 'full', timeStyle: 'short'})
+    new Notification(`Am gasit o posibila rezervare: ${localizedString}`,
+      {body: 'Du-te pe https://www.epasapoarte.ro/ sa rezervi!'})
   }
 
-  async start() {
+  transformMinutesToMilliseconds(minutes: number) {
+    return minutes * 60 * 1000
+  }
+
+  async start(): Promise<void> {
     await this.checkAvailability()
-    const source = interval(1800000 );
+    console.log(this.formGroup.get('county')?.value)
+    const source = interval(this.transformMinutesToMilliseconds(this.formGroup.get('timeInterval')?.value));
     this.subscription = source.subscribe(_ => this.checkAvailability())
   }
 
-  ngOnDestroy(): void {
-    this.subscription && this.subscription.unsubscribe()
-  }
 }
