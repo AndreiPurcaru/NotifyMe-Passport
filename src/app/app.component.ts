@@ -3,6 +3,7 @@ import {FormBuilder, Validators} from '@angular/forms';
 import {getClient} from "@tauri-apps/api/http";
 import {interval, Observable, Subscription, map, startWith} from "rxjs";
 import CountiesJSON from 'src/assets/json/counties.json'
+import {TranslateService} from "@ngx-translate/core";
 
 interface TimeInterval {
   value: string
@@ -43,7 +44,11 @@ export class AppComponent implements OnInit, OnDestroy{
   counties: County[] = JSON.parse(JSON.stringify(CountiesJSON))
   filteredOptions?: Observable<County[]>;
 
-  constructor(private formBuilder: FormBuilder) {
+  constructor(private formBuilder: FormBuilder, translateService: TranslateService) {
+    translateService.addLangs(['en', 'ro']);
+    translateService.setDefaultLang('ro');
+    translateService.use('ro');
+
     this.minDate = new Date()
   }
 
