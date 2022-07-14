@@ -1,7 +1,8 @@
 <div class="main-div">
   <mat-card class="mat-elevation-z5">
     <form [formGroup]="formGroup">
-      <mat-form-field appearance="outline" style="width: 100%">
+      <mat-form-field appearance="outline" style="width: 100%" hideRequiredMarker>
+        <mat-label>Judet</mat-label>
         <input type="text" placeholder="Alege un judet" aria-label="Judet" matInput formControlName="county" [matAutocomplete]="auto">
         <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
           <mat-option *ngFor="let countyObject of filteredOptions | async" [value]="countyObject.name">
