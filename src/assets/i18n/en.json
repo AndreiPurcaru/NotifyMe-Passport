@@ -9,5 +9,8 @@
   "invalidEndDate": "The end date is invalid",
   "timeFrameHint": "Select the time interval in which you would like to go to the passport office",
 
-  "mandatoryField": "This field is required"
+  "mandatoryField": "This field is required",
+
+  "romanian": "Romanian",
+  "english": "English"
 }

@@ -9,6 +9,8 @@
   "invalidEndDate": "Data de sfârsit nu este validă",
   "timeFrameHint": "Selectează datele între care ai vrea sa mergi la oficiul de pașapoarte",
 
+  "mandatoryField": "Acest câmp este obligatoriu",
 
-  "mandatoryField": "Acest câmp este obligatoriu"
+  "romanian": "Română",
+  "english": "Engleză"
 }

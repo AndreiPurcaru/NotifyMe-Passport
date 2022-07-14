@@ -16,6 +16,9 @@ import {MatAutocompleteModule} from "@angular/material/autocomplete";
 import {TranslateLoader, TranslateModule} from "@ngx-translate/core";
 import {TranslateHttpLoader} from "@ngx-translate/http-loader";
 import {HttpClient, HttpClientModule} from "@angular/common/http";
+import {MatIconModule} from "@angular/material/icon";
+import {MatButtonToggleModule} from "@angular/material/button-toggle";
+import {MatTooltipModule} from "@angular/material/tooltip";
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http);
@@ -38,6 +41,8 @@ export function HttpLoaderFactory(http: HttpClient) {
     MatDividerModule,
     MatSelectModule,
     MatAutocompleteModule,
+    MatButtonToggleModule,
+    MatTooltipModule,
 
     HttpClientModule,
     TranslateModule.forRoot({
