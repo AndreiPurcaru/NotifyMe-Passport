@@ -1,0 +1,13 @@
+{
+  "county": "County",
+  "pickCounty": "Pick a county",
+
+  "notificationInterval": "Notification Frequency - Minutes",
+
+  "pickTimeFrame": "Pick Time Frame",
+  "invalidStartDate": "The start date is invalid",
+  "invalidEndDate": "The end date is invalid",
+  "timeFrameHint": "Select the time interval in which you would like to go to the passport office",
+
+  "mandatoryField": "This field is required"
+}

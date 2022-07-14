@@ -2,18 +2,18 @@
   <mat-card class="mat-elevation-z5">
     <form [formGroup]="formGroup">
       <mat-form-field appearance="outline" style="width: 100%" hideRequiredMarker>
-        <mat-label>Judet</mat-label>
-        <input type="text" placeholder="Alege un judet" aria-label="Judet" matInput formControlName="county" [matAutocomplete]="auto">
+        <mat-label>{{'county' | translate}}</mat-label>
+        <input type="text" [placeholder]="'pickCounty' | translate" aria-label="Judet" matInput formControlName="county" [matAutocomplete]="auto">
         <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
           <mat-option *ngFor="let countyObject of filteredOptions | async" [value]="countyObject.name">
             {{countyObject.name}}
           </mat-option>
         </mat-autocomplete>
-        <mat-error *ngIf="formGroup.controls['county'].errors != null">Niciun judet selectat</mat-error>
+        <mat-error *ngIf="formGroup.controls['county'].errors != null">{{'requiredField' | translate}}</mat-error>
       </mat-form-field>
 
       <mat-form-field appearance="outline" style="width: 100%;">
-        <mat-label>Interval notificari</mat-label>
+        <mat-label>{{'notificationInterval' | translate}}</mat-label>
         <mat-select formControlName="timeInterval">
           <mat-option *ngFor="let timeInterval of allowedTimeIntervals" [value]="timeInterval.value">
             {{timeInterval.viewValue}}
@@ -23,17 +23,17 @@
       </mat-form-field>
 
       <mat-form-field appearance="outline" style="display: block">
-        <mat-label>Introdu o perioada</mat-label>
+        <mat-label>{{'pickTimeFrame' | translate}}</mat-label>
         <mat-date-range-input  [rangePicker]="picker" [min]="minDate" [max]="">
-          <input matStartDate formControlName="dateFrom" placeholder="Data inceput" >
-          <input matEndDate formControlName="dateTo" placeholder="Data sfarsit">
+          <input matStartDate formControlName="dateFrom" placeholder="DD/MM/YYYY" >
+          <input matEndDate formControlName="dateTo" placeholder="DD/MM/YYYY">
         </mat-date-range-input>
-        <mat-hint>DD/MM/YYYY – DD/MM/YYYY</mat-hint>
+        <mat-hint>{{'timeFrameHint' | translate}}</mat-hint>
         <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
         <mat-date-range-picker #picker></mat-date-range-picker>
 
-        <mat-error *ngIf="formGroup.controls['dateFrom'].hasError('matStartDateInvalid')">Invalid start date</mat-error>
-        <mat-error *ngIf="formGroup.controls['dateTo'].hasError('matEndDateInvalid')">Invalid end date</mat-error>
+        <mat-error *ngIf="formGroup.controls['dateFrom'].hasError('matStartDateInvalid')">{{'invalidStartDate' | translate}}</mat-error>
+        <mat-error *ngIf="formGroup.controls['dateTo'].hasError('matEndDateInvalid')">{{'invalidEndDate' | translate}}</mat-error>
       </mat-form-field>
 
       <div id="button-container" style="text-align: center; margin-top: 1rem">

@@ -1,0 +1,14 @@
+{
+  "county": "Județ",
+  "pickCounty": "Selectează un județ",
+
+  "notificationInterval": "Interval notificare - Minute",
+
+  "pickTimeFrame": "Selectează intervalul dorit",
+  "invalidStartDate": "Data de început nu este validă",
+  "invalidEndDate": "Data de sfârsit nu este validă",
+  "timeFrameHint": "Selectează datele între care ai vrea sa mergi la oficiul de pașapoarte",
+
+
+  "mandatoryField": "Acest câmp este obligatoriu"
+}
