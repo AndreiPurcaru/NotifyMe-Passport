@@ -44,10 +44,10 @@ export class AppComponent implements OnInit, OnDestroy{
   counties: County[] = JSON.parse(JSON.stringify(CountiesJSON))
   filteredOptions?: Observable<County[]>;
 
-  constructor(private formBuilder: FormBuilder, translateService: TranslateService) {
-    translateService.addLangs(['en', 'ro']);
-    translateService.setDefaultLang('ro');
-    translateService.use('ro');
+  constructor(private readonly translateService: TranslateService, private formBuilder: FormBuilder) {
+    translateService.addLangs(['en', 'ro'])
+    translateService.setDefaultLang('ro')
+    translateService.use('ro')
 
     this.minDate = new Date()
   }
@@ -63,10 +63,12 @@ export class AppComponent implements OnInit, OnDestroy{
   }
 
   private _filter(value: string): County[] {
-    const filterValue = value.toLowerCase();
+    const filterValue = value.toLowerCase()
 
-    return this.counties.filter(option => option.name.toLowerCase().includes(filterValue));
+    return this.counties.filter(option => option.name.toLowerCase().includes(filterValue))
   }
+
+
 
   async checkAvailability(): Promise<void> {
     const dateFrom = Date.parse(this.formGroup.get('dateFrom')?.value)
@@ -122,8 +124,12 @@ export class AppComponent implements OnInit, OnDestroy{
   async start(): Promise<void> {
     await this.checkAvailability()
     console.log(this.formGroup.get('county')?.value)
-    const source = interval(this.transformMinutesToMilliseconds(this.formGroup.get('timeInterval')?.value));
+    const source = interval(this.transformMinutesToMilliseconds(this.formGroup.get('timeInterval')?.value))
     this.subscription = source.subscribe(_ => this.checkAvailability())
+  }
+
+  async toggleLanguage(to: string) {
+    this.translateService.use(to)
   }
 
 }
